@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.mapper.MenuInfoMapper">
+    <resultMap id="menuInfoMap" type="com.qf.dto.MenuInfoDto">
+        <id column="menuid" property="id"></id>
+        <result column="menuname" property="name"></result>
+        <result column="menupath" property="url"></result>
+        <result column="menuicon" property="icon"></result>
+        <result column="parentid" property="pid"></result>
+        <result column="checked" property="checked"></result>
+        <collection property="children" ofType="com.qf.dto.MenuInfoDto">
+            <id column="cid" property="id"></id>
+            <result column="cname" property="name"></result>
+            <result column="cpath" property="url"></result>
+            <result column="cicon" property="icon"></result>
+            <result column="cpid" property="pid"></result>
+            <result column="checked" property="checked"></result>
+        </collection>
+    </resultMap>
+
+    <select id="getAllMenu" resultMap="menuInfoMap" parameterType="int">
+        select tb1.*,rm.status checked from (SELECT m1.*,m2.menuid cid,m2.menuname cname,
+        m2.menupath cpath,m2.menuicon cicon,m2.parentid cpid
+        from menuinfo m1,menuinfo m2  where m1.menuid = m2.parentid) tb1
+        left join role_menu rm on tb1.menuid = rm.mid where rid = #{roleId}
+    </select>
+</mapper>

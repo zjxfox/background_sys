@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.mapper.UserInfoMapper">
+    <!--创建一对多映射-->
+    <resultMap id="userInfoMap" type="com.qf.pojo.UserInfo">
+        <id property="userId" column="userId"></id>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+        <result property="name" column="name"></result>
+        <result property="email" column="email"></result>
+        <result property="status" column="status"></result>
+        <collection property="roleInfos" ofType="com.qf.pojo.RoleInfo">
+            <id property="roleid" column="roleid"></id>
+            <result property="rolename" column="rolename"></result>
+        </collection>
+    </resultMap>
+
+
+    <select id="getUserInfoMapById" resultMap="userInfoMap" parameterType="int">
+        select *
+        from userinfo u,user_role ur,roleinfo r where u.userid = #{id} and u.status=1
+        and ur.status = 1 and ur.userid = u.userid and r.roleid = ur.roleid
+    </select>
+
+    <select id="loginCheck" parameterType="com.qf.pojo.UserInfo" resultType="com.qf.pojo.UserInfo">
+        SELECT * from userinfo where status = 1 and username = #{username} and password = #{password}
+    </select>
+
+    <select id="getCount" resultType="int" parameterType="com.qf.vo.UserInfoVo">
+        select count(*) from userinfo where status = 1
+        <if test="username!=null and username !=''">
+            and username = #{username}
+        </if>
+        <if test="name!=null and name !=''">
+            and name = #{name}
+        </if>
+        <if test="email!=null and email !=''">
+            and email = #{email}
+        </if>
+    </select>
+
+    <select id="getUserInfosPageBy" parameterType="com.qf.vo.UserInfoVo" resultType="com.qf.pojo.UserInfo">
+        SELECT * from userinfo where status = 1
+        <if test="username!=null and username !=''">
+            and username = #{username}
+        </if>
+        <if test="name!=null and name !=''">
+            and name = #{name}
+        </if>
+        <if test="email!=null and email !=''">
+            and email = #{email}
+        </if>
+        limit #{splitePageBean.start},#{splitePageBean.pageSize}
+    </select>
+
+    <select id="getUserInfosBy" parameterType="com.qf.pojo.UserInfo" resultType="com.qf.pojo.UserInfo">
+        SELECT * from userinfo where status = 1
+        <if test="username!=null and username !=''">
+            and username = #{username}
+        </if>
+        <if test="password!=null and password !=''">
+            and password = #{password}
+        </if>
+        <if test="name!=null and name !=''">
+            and name = #{name}
+        </if>
+        <if test="email!=null and email !=''">
+            and email = #{email}
+        </if>
+        <if test="userId!=null and userId !=''">
+            and userId = #{userId}
+        </if>
+    </select>
+
+    <insert id="addUserInfo" parameterType="com.qf.pojo.UserInfo">
+        INSERT INTO userinfo values(DEFAULT ,#{username},#{password},#{name},#{email},#{status})
+    </insert>
+
+    <update id="updateUserInfo" parameterType="com.qf.pojo.UserInfo">
+        UPDATE userinfo
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name}
+            </if>
+        </set>
+        where userId = #{userId}
+    </update>
+
+</mapper>

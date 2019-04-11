@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.mapper.RoleInfoMapper">
+
+    <select id="getRoleByUserId" parameterType="int" resultType="com.qf.dto.RoleInfoDto">
+        select r.*,u.userId from userinfo u right join user_role ur on ur.userId = u.userId
+        right join roleinfo r on ur.roleid = r.roleid
+        and ur.`status`=1
+        and u.`status` = 1 and u.userId = #{userId}
+    </select>
+</mapper>
